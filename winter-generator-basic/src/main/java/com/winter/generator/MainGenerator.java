@@ -18,37 +18,35 @@ import java.io.FileWriter;
 @Log
 public class MainGenerator {
 	public static void main(String[] args) {
-		String rootPath = System.getProperty("user.dir");
-		String sourcePath = rootPath + File.separator + "demo-projects" + File.separator + "acm-template";
-		String templatePath = rootPath + File.separator + "winter-generator-basic" + File.separator + "src/main/resources/templates";
-		String targetPath = rootPath + File.separator + "generated-projects";
-		String templateName = "MainTemplate.java.ftl";
-		// 静态拷贝
-		FileUtil.copy(sourcePath, targetPath, true);
-		// 动态拷贝
+		// 模版数据
 		MainTemplateConfig dataModel = new MainTemplateConfig();
 		dataModel.setAuthor("winter");
 		dataModel.setOutputText("求和为：");
 		dataModel.setLoop(true);
-		String dynamicPath = targetPath + File.separator + "acm-template/src/com/winter/acm/MainTemplate.java";
-		doGenerate(templatePath, dynamicPath, templateName, dataModel);
+		// 生成文件
+		doGenerate(dataModel);
 	}
 
 	/**
-	 * 动态生成文件
+	 * 生成文件
 	 *
-	 * @param templatePath	模版文件路径
-	 * @param dynamicPath	动态文件目标路径
-	 * @param templateName	模版名称
 	 * @param dataModel	模版数据
 	 */
-	private static void doGenerate(String templatePath, String dynamicPath, String templateName, MainTemplateConfig dataModel) {
+	public static void doGenerate(MainTemplateConfig dataModel) {
 		try {
+			String rootPath = System.getProperty("user.dir");
+			String sourcePath = rootPath + File.separator + "demo-projects" + File.separator + "acm-template";
+			String templatePath = rootPath + File.separator + "winter-generator-basic" + File.separator + "src/main/resources/templates";
+			String targetPath = rootPath + File.separator + "generated-projects";
+			String templateName = "MainTemplate.java.ftl";
+			// 静态拷贝
+			FileUtil.copy(sourcePath, targetPath, true);
 			// 创建配置对象
 			Configuration configuration = new Configuration(Configuration.VERSION_2_3_32);
 			configuration.setDefaultEncoding("UTF-8");
 			configuration.setDirectoryForTemplateLoading(new File(templatePath));
 			Template template = configuration.getTemplate(templateName);
+			String dynamicPath = targetPath + File.separator + "acm-template/src/com/winter/acm/MainTemplate.java";
 			FileWriter fileWriter = new FileWriter(dynamicPath);
 			template.process(dataModel, fileWriter);
 			fileWriter.close();
